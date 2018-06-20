@@ -7,6 +7,7 @@ import (
 	"../controller"
 	"../model"
 	"fmt"
+//	"log"
 )
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -79,6 +80,9 @@ var funcMap = template.FuncMap{
 
 func index(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("index(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
 	p := menu{
 		Title:     "borgdir.media, index",
 		Item1:     "Equipment,equipment",
@@ -90,6 +94,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 		EmptySide: false,
 		Profile:   false}
 
+	// fmt.Println(p)
+
 	var tmpl = template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/header.html", "template/layout.html", "template/index.html"))
 
 	tmpl.ExecuteTemplate(w, "main", p)
@@ -100,6 +106,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func admin(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("admin(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
 
 	p := menu{
 		Title:     "borgdir.media,index",
@@ -123,6 +132,9 @@ func admin(w http.ResponseWriter, r *http.Request) {
 
 func login(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("login(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
 	p := menu{
 		Title:     "borgdir.media,index",
 		Item1:     "Equipment,equipment",
@@ -143,6 +155,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 }
 func register(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("register(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
 
 	if r.Method == "POST" {
 
@@ -175,6 +190,9 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 func equipment(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("equipment(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
 	p := menu{
 		Title:     "borgdir.media,index",
 		Item1:     "Equipment,equipment",
@@ -206,6 +224,9 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 }
 func myequipment(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("myequipment(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
 	p := menu{
 		Title:     "borgdir.media,index",
 		Item1:     "Equipment,equipment",
@@ -231,6 +252,9 @@ func myequipment(w http.ResponseWriter, r *http.Request) {
 
 func cart(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("cart(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
 	p := menu{
 		Title:     "borgdir.media,index",
 		Item1:     "Equipment,equipment",
@@ -251,7 +275,38 @@ func cart(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func profile(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("profile(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
+	p := menu{
+		Title:     "borgdir.media,index",
+		Item1:     "Equipment,equipment",
+		Item2:     "Meine Geräte,myequipment",
+		Item3:     "Logout,logout",
+		Basket:    true,
+		Name:      "",
+		Type:      "",
+		EmptySide: false,
+		Profile:   true}
+
+	ProfilesArr := controller.GetProfile(1)
+
+	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/layout.html"))
+
+	tmpl.ExecuteTemplate(w, "main", p)
+	tmpl.ExecuteTemplate(w, "layout", p)
+	tmpl.ExecuteTemplate(w, "header", p)
+
+	tmpl.ExecuteTemplate(w, "profile", Profiles{Items: ProfilesArr})
+
+}
+
 func adminEquipment(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("adminEquipment(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
 
 	// ADMIN
 	p := menu{
@@ -275,42 +330,79 @@ func adminEquipment(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "adminEquipment", AdminEquipments{Items: ArtikelArr})
 
 }
+
 func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("adminAddEquipment(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
 
 	if r.Method == "POST" {
 		controller.CreateArtikel(w, r)
 		// equipment(w,r)
 	} else {
 
+		p := menu{
+			Title:     "borgdir.media,index",
+			Item1:     "Equipment,equipment",
+			Item2:     "Kunden,clients",
+			Item3:     "Logout,logout",
+			Basket:    false,
+			Name:      "",
+			Type:      "",
+			EmptySide: false,
+			Profile:   true}
+
+		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminAddEquipment.html", "template/header.html", "template/layout.html"))
+
+		tmpl.ExecuteTemplate(w, "main", p)
+		tmpl.ExecuteTemplate(w, "layout", p)
+		tmpl.ExecuteTemplate(w, "header", p)
+		tmpl.ExecuteTemplate(w, "adminAddEquipment", p)
 	}
-	p := menu{
-		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Kunden,clients",
-		Item3:     "Logout,logout",
-		Basket:    false,
-		Name:      "",
-		Type:      "",
-		EmptySide: false,
-		Profile:   true}
 
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminAddEquipment.html", "template/header.html", "template/layout.html"))
+}
+func adminEditEquipment(w http.ResponseWriter, r *http.Request) {
 
-	tmpl.ExecuteTemplate(w, "main", p)
-	tmpl.ExecuteTemplate(w, "layout", p)
-	tmpl.ExecuteTemplate(w, "header", p)
-	tmpl.ExecuteTemplate(w, "adminAddEquipment", p)
+	fmt.Println("adminEditEquipment(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
+	if r.Method == "POST" {
+		controller.CreateArtikel(w, r)
+		// equipment(w,r)
+	} else {
+
+		p := menu{
+			Title:     "borgdir.media,index",
+			Item1:     "Equipment,equipment",
+			Item2:     "Kunden,clients",
+			Item3:     "Logout,logout",
+			Basket:    false,
+			Name:      "",
+			Type:      "",
+			EmptySide: false,
+			Profile:   true}
+
+		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditEquipment.html", "template/header.html", "template/layout.html"))
+
+		tmpl.ExecuteTemplate(w, "main", p)
+		tmpl.ExecuteTemplate(w, "layout", p)
+		tmpl.ExecuteTemplate(w, "header", p)
+		tmpl.ExecuteTemplate(w, "adminEditEquipment", p)
+	}
 
 }
 
-func adminClients(w http.ResponseWriter, r *http.Request) {
+func adminProfiles(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("adminClients(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
 
 	if r.Method == "POST" {
-		// adminEditClients(w,r)
+		// adminEditProfile(w,r)
 		// userName := r.
 		// KundenID = r.FormValue("KundenID")
 
-		// adminEditClients(r.PostFormValue())
+		// adminEditProfile(r.PostFormValue())
 
 	} else {
 
@@ -359,32 +451,10 @@ func adminClients(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+func adminEditProfile(w http.ResponseWriter, r *http.Request) {
 
-func profile(w http.ResponseWriter, r *http.Request) {
-
-	p := menu{
-		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Meine Geräte,myequipment",
-		Item3:     "Logout,logout",
-		Basket:    true,
-		Name:      "",
-		Type:      "",
-		EmptySide: false,
-		Profile:   true}
-
-	ProfilesArr := controller.GetProfile(1)
-
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/layout.html"))
-
-	tmpl.ExecuteTemplate(w, "main", p)
-	tmpl.ExecuteTemplate(w, "layout", p)
-	tmpl.ExecuteTemplate(w, "header", p)
-
-	tmpl.ExecuteTemplate(w, "profile", Profiles{Items: ProfilesArr})
-
-}
-func adminEditClients(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("adminEditProfile(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
 
 	p := menu{
 		Title:     "borgdir.media,index",
@@ -399,13 +469,63 @@ func adminEditClients(w http.ResponseWriter, r *http.Request) {
 
 	ClientArr := controller.GetProfile(1)
 
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditClients.html", "template/header.html", "template/layout.html"))
+	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditProfile.html", "template/header.html", "template/layout.html"))
 
 	tmpl.ExecuteTemplate(w, "main", p)
 	tmpl.ExecuteTemplate(w, "layout", p)
 	tmpl.ExecuteTemplate(w, "header", p)
 
-	tmpl.ExecuteTemplate(w, "adminEditClients", Profiles{Items: ClientArr})
+	tmpl.ExecuteTemplate(w, "adminEditProfile", Profiles{Items: ClientArr})
+
+}
+
+func test(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("test(w,r)")
+	fmt.Println()
+
+	/*p := menu{
+		Title:     "borgdir.media, index",
+		Item1:     "Equipment,equipment",
+		Item2:     "Login,login",
+		Item3:     "",
+		Basket:    false,
+		Name:      "",
+		Type:      "",
+		EmptySide: false,
+		Profile:   false}
+	*/
+
+	// fmt.Println(p)
+
+	// tOk := template.New("first")
+
+	// var tmpl = template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/header.html", "template/layout.html", "template/index.html"))
+
+	// tmpl.ExecuteTemplate(w, "main", p)
+	// tmpl.ExecuteTemplate(w, "layout", p)
+	// tmpl.ExecuteTemplate(w, "header", p)
+
+	// tmpl.ExecuteTemplate(w, "index", p)
+
+	// tmpl.Execute(os.Stdout, "HALLO")
+	const html_code = `{{.}}`
+
+	/*type Text struct {
+		text string
+	}*/
+
+	t := template.Must(template.New("html_code").Parse(html_code))
+
+	t.Execute(w,"test")
+
+	// Info := make(map[string]string)
+	// Info["test"] = "About Page"
+
+	// tmpl.ExecuteTemplate(w, "equipment", EquipmentArr)
+	// tmpl.ExecuteTemplate(w, "equipment", map[string]interface{}{"mymap": map[string]string{"key": "value"}})
+
+// t := template.Must(template.New("html_code").Parse(html_code))
 
 }
 
@@ -415,18 +535,23 @@ func Handler() {
 
 	fmt.Println("Aufruf Handler()")
 
+	fmt.Println()
+
 	http.HandleFunc("/", index)
 	http.HandleFunc("/admin", admin)
 	http.HandleFunc("/admin/equipment", adminEquipment)
 	http.HandleFunc("/admin/add", adminAddEquipment)
-	http.HandleFunc("/admin/clients", adminClients)
-	http.HandleFunc("/admin/edit-clients", adminEditClients)
+	http.HandleFunc("/admin/clients", adminProfiles)
+	http.HandleFunc("/admin/edit-clients", adminEditProfile)
+	http.HandleFunc("/admin/edit-equipment", adminEditEquipment)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/equipment", equipment)
 	http.HandleFunc("/myequipment", myequipment)
 	http.HandleFunc("/profile", profile)
 	http.HandleFunc("/register", register)
 	http.HandleFunc("/cart", cart)
+
+	http.HandleFunc("/test", test)
 
 	return
 }
